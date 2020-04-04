@@ -4,6 +4,7 @@ import (
 	"github.com/stupboy/leaf/chanrpc"
 	"github.com/stupboy/leaf/console"
 	"github.com/stupboy/leaf/go"
+	"github.com/stupboy/leaf/log"
 	"github.com/stupboy/leaf/timer"
 	"time"
 )
@@ -56,7 +57,9 @@ func (s *Skeleton) Run(closeSig chan bool) {
 		case ri := <-s.client.ChanAsynRet:
 			s.client.Cb(ri)
 		case ci := <-s.server.ChanCall:
-			s.server.Exec(ci)
+			log.Debug("%s %v","chanRpc并发长度:",len(s.server.Nums))//stupboy 添加
+			s.server.Nums <- true
+			go s.server.Exec(ci)
 		case ci := <-s.commandServer.ChanCall:
 			s.commandServer.Exec(ci)
 		case cb := <-s.g.ChanCb:
