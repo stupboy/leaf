@@ -19,7 +19,6 @@ type Server struct {
 	// func(args []interface{}) []interface{}
 	functions map[interface{}]interface{}
 	ChanCall  chan *CallInfo
-	Nums chan bool
 }
 
 type CallInfo struct {
@@ -53,7 +52,6 @@ func NewServer(l int) *Server {
 	s := new(Server)
 	s.functions = make(map[interface{}]interface{})
 	s.ChanCall = make(chan *CallInfo, l)
-	s.Nums = make(chan bool, conf.ChanRpcNUms)
 	return s
 }
 
@@ -111,7 +109,6 @@ func (s *Server) exec(ci *CallInfo) (err error) {
 
 			s.ret(ci, &RetInfo{err: fmt.Errorf("%v", r)})
 		}
-		<- s.Nums
 	}()
 
 	// execute
